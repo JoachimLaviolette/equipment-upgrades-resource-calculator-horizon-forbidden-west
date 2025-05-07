@@ -6,7 +6,7 @@ Python program that computes total resources needed to fully upgrade a set of eq
 
 The `dataset` directory is expected to contain screenshots of the `Costs (en)/Coûts (fr)` description of the equipment. This can be found by using a workbench in the game. Here is an example of the expected screenshots:
 
-![Example of input dataset](./dataset_example_0.jpg) ![Example of input dataset](./dataset_example_1.jpg) ![Example of input dataset](./dataset_example_2.jpg)
+![Example of input dataset](./dataset_example_0.jpg) ![Example of input dataset](./dataset_example_1.jpg)
 
 ## Description
 
