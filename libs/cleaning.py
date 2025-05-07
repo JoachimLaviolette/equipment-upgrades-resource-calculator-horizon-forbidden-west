@@ -39,7 +39,7 @@ def __clean_text_google_cloud_vision(text: str) -> str:
     # remove new lines and extra white spaces between '-' and text
     new_entries = [entry.replace('\n', ' ').replace('- ', '-').strip() for entry in new_entries]
     # fix wrong traductions
-    new_entries = [re.sub(r'^[AV]Cœur', 'Cœur', entry).strip() for entry in new_entries]
+    new_entries = [entry.replace('ACœur', 'Cœur').replace('VCœur', 'Cœur').strip() for entry in new_entries]
     # remove unwanted polluting keywords and characters
     substrings_to_remove = ['VO', 'VAN', 'VA', 'TUTT', 'TITT', '✓', 'דוח']
 
