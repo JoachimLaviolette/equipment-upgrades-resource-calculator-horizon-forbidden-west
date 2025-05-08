@@ -23,7 +23,7 @@ def extract_text_from_image(image_path: str, extraction_engine: str) -> str:
 
 def __extract_text_from_image_tesseract(image_path: str) -> str:
     image = Image.open(image_path)
-    text = pytesseract.image_to_string(image)
+    text = pytesseract.image_to_string(image, config='--psm 11', lang='fra')
 
     return text
 
@@ -35,12 +35,12 @@ def __extract_text_from_image_google_cloud_vision(image_path: str) -> str:
 
     response = requests.post(
         url=f'https://vision.googleapis.com/v1/images:annotate?key={os.getenv('GOOGLE_CLOUD_VISION_API_KEY')}',
-        headers={"Content-Type": "application/json"},
+        headers={'Content-Type': 'application/json'},
         json={
-            "requests": [
+            'requests': [
                 {
-                    "image": {"content": encoded_image},
-                    "features": [{"type": "TEXT_DETECTION"}]
+                    'image': {'content': encoded_image},
+                    'features': [{'type': 'TEXT_DETECTION'}]
                 }
             ]
         }
@@ -49,10 +49,10 @@ def __extract_text_from_image_google_cloud_vision(image_path: str) -> str:
     data = response.json()
 
     try:
-        text = data["responses"][0]["fullTextAnnotation"]["text"]
+        text = data['responses'][0]['fullTextAnnotation']['text']
         
         return text
     except KeyError:
-        print("No text returned from Google Cloud Vision API.")
+        print('No text returned from Google Cloud Vision API.')
 
         return ''

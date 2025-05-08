@@ -13,15 +13,31 @@ def clean_text(text: str, extraction_engine: str) -> str:
 def __clean_text_tesseract(text: str) -> str:
     text = re.search(r'de métal(.*)', text, re.DOTALL).group(1).strip()
     # isolate elements
-    entries = text.split('\n\n')
-    # remove extra white spaces between '-' and text
-    entries = [entry.replace('\n', ' ').replace('- ', '-').strip() for entry in entries]
-    # remove element that aint start with number (number)
-    entries = [entry for entry in entries if re.match(r'^\d+\s*\(\d+\)', entry.strip())]
+    text = text.replace('\n\n', '\n')
+    entries = text.split('\n')
     
-    # print(entries)
+    new_entries = []
+
+    for entry in entries:
+        if re.match(r'^\d+\s*\(\d+\)', entry.strip()):
+            new_entries.append(f'{entry}')
+        else:
+            new_entries[-1] = f'{new_entries[-1]} {entry}'
+
+    # remove polluting keywords and characters
+    substrings_to_remove = ['VO', 'VAN', 'VA', 'TUTT', 'TITT', '✓', 'דוח']
+
+    final_entries = []
+
+    for entry in new_entries:
+        for substring_to_remove in substrings_to_remove:
+            entry = entry.replace(substring_to_remove, '')
+        final_entries.append(entry)
     
-    return '\n'.join(entries)
+    # remove new lines and extra white spaces between '-' and text
+    final_entries = [entry.replace('\n', ' ').replace('- ', '-').strip() for entry in final_entries]
+    
+    return '\n'.join(final_entries)
 
 def __clean_text_google_cloud_vision(text: str) -> str:
     text = re.search(r'de métal(.*)', text, re.DOTALL).group(1).strip()
@@ -49,7 +65,7 @@ def __clean_text_google_cloud_vision(text: str) -> str:
     # remove new lines and extra white spaces between '-' and text
     final_entries = [entry.replace('\n', ' ').replace('- ', '-').strip() for entry in final_entries]
     # fix wrong traductions
-    final_entries = [entry.replace('ACœur', 'Cœur').replace('VCœur', 'Cœur').replace(' E ', ' ').strip() for entry in final_entries]
+    final_entries = [entry.replace('ACœur', 'Cœur').replace('FCœur', 'Cœur').replace('VCœur', 'Cœur').replace(' E ', ' ').replace(' U ', ' ').strip() for entry in final_entries]
     # stirpping
     final_entries = [entry.replace('  ', ' ').strip() for entry in final_entries]
     

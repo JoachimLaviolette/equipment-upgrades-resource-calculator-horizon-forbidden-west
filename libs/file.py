@@ -1,11 +1,13 @@
 import os
+from PIL import Image
 
-def get_files_from_folder(folder_path: str) -> list[str]:
+def get_files_from_folder(folder_path: str, extensions: list[str] = None) -> list[str]:
     try:
         return [
             os.path.abspath(os.path.join(folder_path, f))
             for f in os.listdir(folder_path)
-            if os.path.isfile(os.path.join(folder_path, f))
+            if os.path.isfile(os.path.join(folder_path, f)) and 
+               (extensions is None or os.path.splitext(f)[1].lower() in [ext.lower() for ext in extensions])
         ]
     except FileNotFoundError:
         print("The specified folder does not exist.")
@@ -25,3 +27,8 @@ def write_file(file_path: str, content: str):
     
     with open(file=file_path, mode='w', encoding='utf8') as f:
         f.write(content)
+
+def write_image(file_path: str, image: Image):
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    
+    image.save(file_path)

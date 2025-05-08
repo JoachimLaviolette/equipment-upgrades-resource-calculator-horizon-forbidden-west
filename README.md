@@ -4,18 +4,19 @@ Python program that computes total resources needed to fully upgrade a set of eq
 
 ## Input parameters
 
-The `dataset` directory is expected to contain screenshots with the upgrade costs of the equipments you want to fully upgrade. To get such screenshots, find a workbench in the game, go to the upgrad epage of the equipment and take a screenshot. Then, crop the image so it displays the costs area only. Here is an example:
+The `dataset/original` directory is expected to contain screenshots with the upgrade costs of the equipments you want to fully upgrade. To get such screenshots, find a workbench in the game, go to the upgrade page of the equipment and take a screenshot. 
 
-![Screenshot of some equipment's upgrade costs](./dataset_example_0.jpg)
+**In order to get better results for the text extraction, save the screenshot in PNG format (you can select the format in the Playstation's screenshot tool settings)** 
 
 ## Description
 
-1. The program extracts the upgrade costs from the provided screenshots via text extraction techniques. 2 text extraction engines can be used: 
+1. The program crops every screenshot from the `dataset/original` directory and save the cropped screenshot in the `dataset/cropped` directory 
+2. The program extracts the upgrade costs from cropped screenshots via text extraction techniques. 2 text extraction engines can be used: 
 - Google Cloud Vision
 - Tesseract OCR (_still WIP_)
-2. The program cleans up the extracted text so it can be processed easily
-3. The program computes the total cost per resource (shards are omitted, I assume you will have enough 😉)
-4. The program writes a compilation table with the resource costs in a file (see `output/results.md` file after execution), which looks like this *(in French)*:
+3. The program cleans up the extracted text so it can be processed easily
+4. The program computes the total cost per resource (shards are omitted, I assume you will have enough 😉)
+5. The program writes a compilation table with the resource costs in a file (see `output/results/total_costs_per_resource.md` file after execution), which looks like this *(in French)*:
 
 | Ressource         | Total       |
 |-------------------|-------------|

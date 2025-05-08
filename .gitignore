@@ -1,5 +1,8 @@
 venv
-dataset
+dataset/cropped/*
+dataset/original/*
+!dataset/cropped/.gitkeep
+!dataset/original/.gitkeep
 output
 .env
 **__pycache__

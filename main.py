@@ -1,9 +1,9 @@
 import os
-import argparse
 from dotenv import load_dotenv
 from libs.extraction import extract_text_from_image
-from libs.file import get_files_from_folder, read_file, write_file
+from libs.file import get_files_from_folder, read_file, write_file, write_image
 from libs.cleaning import ExtractionEngine, clean_text
+from libs.cropping import crop_image
 
 def get_extraction_engine() -> ExtractionEngine:
     load_dotenv(dotenv_path='.env', override=True)
@@ -68,43 +68,81 @@ def get_extraction_engine() -> ExtractionEngine:
 
         return ExtractionEngine.TESSERACT.value
 
-def main():
-    extraction_engine: str = get_extraction_engine()
-
-    image_paths = get_files_from_folder(folder_path='dataset')
+def crop_original_dataset():
+    image_paths = get_files_from_folder(folder_path='dataset/original', extensions=['.png'])
 
     for image_path in image_paths:
-        # extracted_text = extract_text_from_image(image_path=image_path, extraction_engine=extraction_engine)
-        extracted_text = read_file(file_path=f'output/{os.path.splitext(os.path.basename(image_path))[0]}_{extraction_engine}_extracted_text.txt')
+        file_name, file_ext = os.path.splitext(os.path.basename(image_path))
+        cropped_image = crop_image(image_path=image_path)
+        write_image(file_path=f'dataset/cropped/{file_name}.{file_ext}', image=cropped_image)
+
+def extract_text_from_cropped_dataset(extraction_engine: str):
+    print('Extracting texts from cropped screenshots...')
+
+    image_paths = get_files_from_folder(folder_path='dataset/cropped', extensions=['.png'])
+
+    for image_path in image_paths:
+        file_name, file_ext = os.path.splitext(os.path.basename(image_path))
+        extracted_text = extract_text_from_image(image_path=image_path, extraction_engine=extraction_engine)
+        # extracted_text = read_file(file_path=f'output/{extraction_engine/extracted/{file_name}.txt')
+        write_file(file_path=f'output/{extraction_engine}/extracted/{file_name}.txt', content=extracted_text)
+
+def clean_extracted_text(extraction_engine: str):
+    print('Cleaning extracted texts...')
+
+    extracted_text_file_paths = get_files_from_folder(folder_path=f'output/{extraction_engine}/extracted', extensions=['.txt'])
+
+    for extracted_text_file_path in extracted_text_file_paths:
+        file_name, _ = os.path.splitext(os.path.basename(extracted_text_file_path))
+        extracted_text = read_file(file_path=extracted_text_file_path)
         cleaned_text = clean_text(text=extracted_text, extraction_engine=extraction_engine)
+        write_file(file_path=f'output/{extraction_engine}/cleaned/{file_name}.txt', content=cleaned_text)
 
-        write_file(file_path=f'output/{os.path.splitext(os.path.basename(image_path))[0]}_{extraction_engine}_extracted_text.txt', content=extracted_text)
-        write_file(file_path=f'output/{os.path.splitext(os.path.basename(image_path))[0]}_{extraction_engine}_cleaned_text.txt', content=cleaned_text)
+def compute_total_costs_per_resource(extraction_engine: str) -> dict:
+    print('Computing total costs per resource...')
+    
+    total_costs_per_resource: dict = {}
+    cleaned_text_file_paths = get_files_from_folder(folder_path=f'output/{extraction_engine}/cleaned', extensions=['.txt'])
 
-    total_per_resource: dict = {}
-
-    for image_path in image_paths:
-        content = read_file(file_path=f'output/{os.path.splitext(os.path.basename(image_path))[0]}_{extraction_engine}_cleaned_text.txt')
+    for cleaned_text_file_path in cleaned_text_file_paths:
+        content = read_file(file_path=cleaned_text_file_path)
         lines = content.split('\n')
 
         for line in lines:
             chunks = line.split(' ', maxsplit=2)
-            total = int(chunks[0])
+            total_costs = int(chunks[0])
             resource = chunks[2]
 
-            if resource not in total_per_resource.keys():
-                total_per_resource[resource] = total
+            if resource not in total_costs_per_resource.keys():
+                total_costs_per_resource[resource] = total_costs
             else:
-                total_per_resource[resource] = total_per_resource[resource] + total
+                total_costs_per_resource[resource] = total_costs_per_resource[resource] + total_costs
 
-    total_per_resource = dict(sorted(total_per_resource.items()))
+    return dict(sorted(total_costs_per_resource.items()))
 
-    with open(file='output/results.md', mode='w', encoding='utf8') as f:
-        f.write('| Ressource         | Total       |\n')
-        f.write('|-------------------|-------------|\n')
-        
-        for key, value in total_per_resource.items():
-            f.write(f'| {key}      | {value}     |\n')
+def save_total_costs_per_resource(total_costs_per_resource: dict):
+    print('Saving total costs per resource in markdown file...')
+
+    content: list[str] = [
+        '| Ressource         | Total       |',
+        '|-------------------|-------------|'
+    ]
+    
+    for key, value in total_costs_per_resource.items():
+        content.append(f'| {key}      | {value}     |')
+
+    file_path = 'output/results/total_costs_per_resource.md'
+    write_file(file_path=file_path, content='\n'.join(content))    
+    print(f"Result saved in file '{file_path}'.")
+
+def main():
+    extraction_engine: str = get_extraction_engine()
+
+    # crop_original_dataset()
+    # extract_text_from_cropped_dataset(extraction_engine=extraction_engine)   
+    clean_extracted_text(extraction_engine=extraction_engine)
+    total_costs_per_resource = compute_total_costs_per_resource(extraction_engine=extraction_engine)
+    save_total_costs_per_resource(total_costs_per_resource=total_costs_per_resource)
 
 if __name__ == '__main__':
     main()
