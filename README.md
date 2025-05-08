@@ -21,7 +21,7 @@ Here is a screenshot example:
 - Tesseract OCR (_still WIP_)
 3. The program cleans up the extracted text so it can be processed easily
 4. The program computes the total cost per resource (shards are omitted, I assume you will have enough 😉)
-5. The program writes a compilation table with the resource costs in a file (see `output/results/total_costs_per_resource.md` file after execution), which looks like this *(in French)*:
+5. The program writes a compilation table with the total costs per resource in a markdown file (see `output/results/total_costs_per_resource.md` file after execution), which looks like this *(in French)*:
 
 | Ressource         | Total       |
 |-------------------|-------------|
