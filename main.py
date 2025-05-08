@@ -138,8 +138,8 @@ def save_total_costs_per_resource(total_costs_per_resource: dict):
 def main():
     extraction_engine: str = get_extraction_engine()
 
-    # crop_original_dataset()
-    # extract_text_from_cropped_dataset(extraction_engine=extraction_engine)   
+    crop_original_dataset()
+    extract_text_from_cropped_dataset(extraction_engine=extraction_engine)   
     clean_extracted_text(extraction_engine=extraction_engine)
     total_costs_per_resource = compute_total_costs_per_resource(extraction_engine=extraction_engine)
     save_total_costs_per_resource(total_costs_per_resource=total_costs_per_resource)
