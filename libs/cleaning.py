@@ -36,11 +36,7 @@ def __clean_text_google_cloud_vision(text: str) -> str:
         else:
             new_entries[-1] = f'{new_entries[-1]} {entry}'
 
-    # remove new lines and extra white spaces between '-' and text
-    new_entries = [entry.replace('\n', ' ').replace('- ', '-').strip() for entry in new_entries]
-    # fix wrong traductions
-    new_entries = [entry.replace('ACœur', 'Cœur').replace('VCœur', 'Cœur').replace(' E ', ' ').strip() for entry in new_entries]
-    # remove unwanted polluting keywords and characters
+    # remove polluting keywords and characters
     substrings_to_remove = ['VO', 'VAN', 'VA', 'TUTT', 'TITT', '✓', 'דוח']
 
     final_entries = []
@@ -49,7 +45,12 @@ def __clean_text_google_cloud_vision(text: str) -> str:
         for substring_to_remove in substrings_to_remove:
             entry = entry.replace(substring_to_remove, '')
         final_entries.append(entry)
-
+    
+    # remove new lines and extra white spaces between '-' and text
+    final_entries = [entry.replace('\n', ' ').replace('- ', '-').strip() for entry in final_entries]
+    # fix wrong traductions
+    final_entries = [entry.replace('ACœur', 'Cœur').replace('VCœur', 'Cœur').replace(' E ', ' ').strip() for entry in final_entries]
+    # stirpping
     final_entries = [entry.replace('  ', ' ').strip() for entry in final_entries]
     
     return '\n'.join(final_entries)
