@@ -8,10 +8,15 @@ from libs.cropping import crop_image
 def get_extraction_engine() -> ExtractionEngine:
     load_dotenv(dotenv_path='.env', override=True)
 
-    if os.getenv('EXTRACTION_ENGINE') == ExtractionEngine.TESSERACT.value:
-        print(f"Extraction engine '{ExtractionEngine.TESSERACT.value}' found in .env file. This engine will be used.")
+    if os.getenv('EXTRACTION_ENGINE') == ExtractionEngine.TESSERACT_OCR.value:
+        print(f"Extraction engine '{ExtractionEngine.TESSERACT_OCR.value}' found in .env file. This engine will be used.")
 
-        return ExtractionEngine.TESSERACT.value
+        return ExtractionEngine.TESSERACT_OCR.value
+
+    if os.getenv('EXTRACTION_ENGINE') == ExtractionEngine.EASY_OCR.value:
+        print(f"Extraction engine '{ExtractionEngine.EASY_OCR.value}' found in .env file. This engine will be used.")
+
+        return ExtractionEngine.EASY_OCR.value
     
     if os.getenv('EXTRACTION_ENGINE') == ExtractionEngine.GOOGLE_CLOUD_VISION.value:
         print(f"Extraction engine '{ExtractionEngine.GOOGLE_CLOUD_VISION.value}' found in .env file. This engine will be used.")
@@ -64,9 +69,9 @@ def get_extraction_engine() -> ExtractionEngine:
 
         return ExtractionEngine.GOOGLE_CLOUD_VISION.value
     else:
-        print(f"Extraction engine '{ExtractionEngine.TESSERACT.value}' will be used.")
+        print(f"Extraction engine '{ExtractionEngine.TESSERACT_OCR.value}' will be used.")
 
-        return ExtractionEngine.TESSERACT.value
+        return ExtractionEngine.TESSERACT_OCR.value
 
 def crop_original_dataset():
     image_paths = get_files_from_folder(folder_path='dataset/original', extensions=['.png'])
@@ -120,7 +125,7 @@ def compute_total_costs_per_resource(extraction_engine: str) -> dict:
 
     return dict(sorted(total_costs_per_resource.items()))
 
-def save_total_costs_per_resource(total_costs_per_resource: dict):
+def save_total_costs_per_resource(total_costs_per_resource: dict, extraction_engine: str):
     print('Saving total costs per resource in markdown file...')
 
     content: list[str] = [
@@ -131,18 +136,18 @@ def save_total_costs_per_resource(total_costs_per_resource: dict):
     for key, value in total_costs_per_resource.items():
         content.append(f'| {key}      | {value}     |')
 
-    file_path = 'output/results/total_costs_per_resource.md'
+    file_path = f'output/{extraction_engine}/results/total_costs_per_resource.md'
     write_file(file_path=file_path, content='\n'.join(content))    
     print(f"Result saved in file '{file_path}'.")
 
 def main():
     extraction_engine: str = get_extraction_engine()
 
-    crop_original_dataset()
-    extract_text_from_cropped_dataset(extraction_engine=extraction_engine)   
+    # crop_original_dataset()
+    # extract_text_from_cropped_dataset(extraction_engine=extraction_engine)   
     clean_extracted_text(extraction_engine=extraction_engine)
     total_costs_per_resource = compute_total_costs_per_resource(extraction_engine=extraction_engine)
-    save_total_costs_per_resource(total_costs_per_resource=total_costs_per_resource)
+    save_total_costs_per_resource(total_costs_per_resource=total_costs_per_resource, extraction_engine=extraction_engine)
 
 if __name__ == '__main__':
     main()

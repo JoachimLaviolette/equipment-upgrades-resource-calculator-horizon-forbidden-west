@@ -5,33 +5,45 @@ import requests
 from dotenv import load_dotenv
 import os
 from enum import Enum
+import easyocr
 
 class ExtractionEngine(Enum):
     GOOGLE_CLOUD_VISION = 'google_cloud_vision'
-    TESSERACT = 'tesseract'
+    TESSERACT_OCR = 'tesseract_ocr'
+    EASY_OCR = 'easy_ocr'
 
 def extract_text_from_image(image_path: str, extraction_engine: str) -> str:
-    if extraction_engine not in [ExtractionEngine.GOOGLE_CLOUD_VISION.value, ExtractionEngine.TESSERACT.value]:
+    if extraction_engine not in [ExtractionEngine.GOOGLE_CLOUD_VISION.value, ExtractionEngine.TESSERACT_OCR.value, ExtractionEngine.EASY_OCR.value]:
         raise Exception('Unhandled text extraction origin.')
     
     print(f"Extracting text from image '{image_path}'...")
 
-    if extraction_engine == ExtractionEngine.GOOGLE_CLOUD_VISION.value:
-        return __extract_text_from_image_google_cloud_vision(image_path=image_path)
+    if extraction_engine == ExtractionEngine.TESSERACT_OCR.value:
+        return __extract_text_from_image_tesseract_ocr(image_path=image_path)
     
-    return __extract_text_from_image_tesseract(image_path=image_path)
+    if extraction_engine == ExtractionEngine.EASY_OCR.value:
+        return __extract_text_from_image_easy_ocr(image_path=image_path)
+        
+    return __extract_text_from_image_google_cloud_vision(image_path=image_path)
 
-def __extract_text_from_image_tesseract(image_path: str) -> str:
+
+def __extract_text_from_image_tesseract_ocr(image_path: str) -> str:
     image = Image.open(image_path)
     text = pytesseract.image_to_string(image, config='--psm 11', lang='fra')
 
     return text
 
+def __extract_text_from_image_easy_ocr(image_path: str) -> str:
+    reader = easyocr.Reader(['fr'], gpu=False)
+    results = reader.readtext(image_path)
+    
+    return '\n'.join([text for (_, text, _) in results])
+
 def __extract_text_from_image_google_cloud_vision(image_path: str) -> str:
     load_dotenv(dotenv_path='.env', override=True)
     
-    with open(image_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+    with open(image_path, 'rb') as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
 
     response = requests.post(
         url=f'https://vision.googleapis.com/v1/images:annotate?key={os.getenv('GOOGLE_CLOUD_VISION_API_KEY')}',

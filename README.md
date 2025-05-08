@@ -18,10 +18,11 @@ Here is a screenshot example:
 ![Cropped screenshot example](./cropped_screenshot_example.png)
 2. The program extracts the upgrade costs from cropped screenshots via text extraction techniques. 2 text extraction engines can be used: 
 - Google Cloud Vision
+- Easy OCR
 - Tesseract OCR (_still WIP_)
 3. The program cleans up the extracted text so it can be processed easily
 4. The program computes the total cost per resource (shards are omitted, I assume you will have enough 😉)
-5. The program writes a compilation table with the total costs per resource in a markdown file (see `output/results/total_costs_per_resource.md` file after execution), which looks like this *(in French)*:
+5. The program writes a compilation table with the total costs per resource in a markdown file (see `output/{extraction_engine}/results/total_costs_per_resource.md` file after execution), which looks like this *(in French)*:
 
 | Ressource         | Total       |
 |-------------------|-------------|
@@ -49,7 +50,7 @@ The engine must be installed on your personal workstation so the program can exe
 
 At the root of the projet tree, duplicate the `.env.sample` file and rename it `.env`. The following variables can be set:
 - `GOOGLE_CLOUD_VISION_API_KEY`: API key required only if using this engine (optional - if not specified, you will be asked to provide an API key if you select GCV engine)
-- `EXTRACTION_ENGINE`: either 'google_cloud_vision' or 'tesseract' (optional - if not specified, will be asked by the program)
+- `EXTRACTION_ENGINE`: either 'google_cloud_vision', 'tesseract_ocr' or 'easy_ocr' (optional - if not specified, will be asked by the program)
 
 ## Execution
 
