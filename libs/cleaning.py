@@ -3,7 +3,7 @@ from libs.extraction import ExtractionEngine
 
 def clean_text(text: str, extraction_engine: str) -> str:
     if extraction_engine not in [ExtractionEngine.GOOGLE_CLOUD_VISION.value, ExtractionEngine.TESSERACT.value]:
-        raise Exception('Unhandled text extraction origin.')
+        raise Exception('Unhandled text extraction engine.')
     
     if extraction_engine == ExtractionEngine.GOOGLE_CLOUD_VISION.value:
         return __clean_text_google_cloud_vision(text=text)
@@ -39,7 +39,7 @@ def __clean_text_google_cloud_vision(text: str) -> str:
     # remove new lines and extra white spaces between '-' and text
     new_entries = [entry.replace('\n', ' ').replace('- ', '-').strip() for entry in new_entries]
     # fix wrong traductions
-    new_entries = [entry.replace('ACœur', 'Cœur').replace('VCœur', 'Cœur').strip() for entry in new_entries]
+    new_entries = [entry.replace('ACœur', 'Cœur').replace('VCœur', 'Cœur').replace(' E ', ' ').strip() for entry in new_entries]
     # remove unwanted polluting keywords and characters
     substrings_to_remove = ['VO', 'VAN', 'VA', 'TUTT', 'TITT', '✓', 'דוח']
 

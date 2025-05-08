@@ -74,8 +74,8 @@ def main():
     image_paths = get_files_from_folder(folder_path='dataset')
 
     for image_path in image_paths:
-        extracted_text = extract_text_from_image(image_path=image_path, extraction_engine=extraction_engine)
-        # extracted_text = read_file(file_path=f'output/{os.path.splitext(os.path.basename(image_path))[0]}_{extraction_engine}_extracted_text.txt')
+        # extracted_text = extract_text_from_image(image_path=image_path, extraction_engine=extraction_engine)
+        extracted_text = read_file(file_path=f'output/{os.path.splitext(os.path.basename(image_path))[0]}_{extraction_engine}_extracted_text.txt')
         cleaned_text = clean_text(text=extracted_text, extraction_engine=extraction_engine)
 
         write_file(file_path=f'output/{os.path.splitext(os.path.basename(image_path))[0]}_{extraction_engine}_extracted_text.txt', content=extracted_text)
