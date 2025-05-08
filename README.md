@@ -25,9 +25,19 @@ Here is a screenshot example:
 
 | Ressource         | Total       |
 |-------------------|-------------|
-| Ressource 1      | 12     |
-| Ressource 2      | 16     |
-| ...      | ...     |
+| Broyeur de Rampant      | 10     |
+| Canon cyclonique d'Oiseau-tempête      | 3     |
+| Circulateur d'Oiseau-tempête      | 2     |
+| Circulateur de Brisevague      | 2     |
+| Circulateur de Frappe-défense      | 10     |
+| Circulateur de Griffes de feu      | 2     |
+| Circulateur de Griffes de gel      | 4     |
+| Circulateur de Gueule-d'orage      | 2     |
+| Circulateur de Massacrépine      | 16     |
+| Circulateur de Rampant      | 2     |
+| Coeur de Gueule-d'orage suprême      | 2     |
+| Croc métallique de Vulpivol      | 5     |
+| Cœur d'Oiseau-tempête suprême      | 2     |
 
 ## Prerequisites
 
