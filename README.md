@@ -8,9 +8,14 @@ The `dataset/original` directory is expected to contain screenshots with the upg
 
 **In order to get better results for the text extraction, save the screenshot in PNG format (you can select the format in the Playstation's screenshot tool settings)** 
 
+Here is a screenshot example:
+
+![Screenshot example](./screenshot_example.png)
+
 ## Description
 
-1. The program crops every screenshot from the `dataset/original` directory and save the cropped screenshot in the `dataset/cropped` directory 
+1. The program crops every screenshot from the `dataset/original` directory and save the cropped screenshot in the `dataset/cropped` directory. The cropped screenshot looks like this:
+![Cropped screenshot example](./cropped_screenshot_example.png)
 2. The program extracts the upgrade costs from cropped screenshots via text extraction techniques. 2 text extraction engines can be used: 
 - Google Cloud Vision
 - Tesseract OCR (_still WIP_)
